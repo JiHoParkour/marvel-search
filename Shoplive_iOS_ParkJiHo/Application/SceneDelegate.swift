@@ -26,6 +26,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         vc.tabBarItem = searchTabBarItem
         
         let tabBarController = UITabBarController()
+        tabBarController.tabBar.backgroundColor = .systemBackground
         tabBarController.setViewControllers([vc], animated: false)
         
         let window = UIWindow(windowScene: windowScene)
