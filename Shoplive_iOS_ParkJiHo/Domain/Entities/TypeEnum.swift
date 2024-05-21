@@ -1,0 +1,14 @@
+//
+//  TypeEnum.swift
+//  Shoplive_iOS_ParkJiHo
+//
+//  Created by jiho park on 5/21/24.
+//
+
+import Foundation
+
+enum TypeEnum: String {
+    case cover = "cover"
+    case interiorStory = "interiorStory"
+    case none
+}
