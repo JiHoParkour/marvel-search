@@ -8,5 +8,5 @@
 import RxSwift
 
 protocol MarvelHeroSearchRepositoryType {
-    func searchMarvelHero(name: String, offset: Int) -> Single<HeroSearch>
+    func search(name: String, offset: Int) -> Single<HeroSearch>
 }

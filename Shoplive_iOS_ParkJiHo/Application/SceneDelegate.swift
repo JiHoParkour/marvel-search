@@ -19,7 +19,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     private func configureTabBar(with windowScene: UIWindowScene) {
         let vc = MarvelHeroSearchViewController()
-        let reactor = MarvelHeroSearchViewReactor()
+        let reactor = MarvelHeroSearchViewReactor(useCase: MarvelHeroSearchUseCase(marvelHeroSearchRepository: MarvelHeroSearchRepository()))
         vc.reactor = reactor
         let searchImage = UIImage(systemName: "magnifyingglass")
         let searchTabBarItem = UITabBarItem(title: "SEARCH", image: searchImage, selectedImage: nil)

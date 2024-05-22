@@ -17,10 +17,12 @@ final class MarvelHeroSearchViewController: UIViewController, View {
     
     private let searchBar = UISearchBar()
     private var collectionView: UICollectionView!
+    private let loadingIndicator = UIActivityIndicatorView(style: .large)
     
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         super.init(nibName: nil, bundle: nil)
         collectionView = UICollectionView(frame: .zero, collectionViewLayout: createCollectionViewLayout())
+        collectionView.keyboardDismissMode = .onDrag
         collectionView.register(MarvelHeroCell.self, forCellWithReuseIdentifier: MarvelHeroCell.identifier)
         collectionView.dataSource = self
         addSubview()
@@ -45,16 +47,35 @@ final class MarvelHeroSearchViewController: UIViewController, View {
             
         searchBar.rx.value.changed
             .compactMap { $0 }
+            .distinctUntilChanged()
             .debounce(.milliseconds(300), scheduler: MainScheduler.instance)
             .subscribe(onNext: { text in
                 reactor.action.onNext(.searchTermChanged(text))
             })
             .disposed(by: disposeBag)
+        
+        searchBar.rx.searchButtonClicked
+            .subscribe(onNext: { [weak self] in
+                self?.view.endEditing(true)
+            })
+            .disposed(by: disposeBag)
+        
+        collectionView.rx.scrolled(portion: 0.9)
+            .map { Reactor.Action.loadNextPage }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        reactor.pulse(\.$isLoading)
+            .compactMap { $0 }
+            .asDriver(onErrorJustReturn: false)
+            .drive(loadingIndicator.rx.isAnimating)
+            .disposed(by: self.disposeBag)
     }
     
     private func addSubview() {
         self.view.addSubview(searchBar)
         self.view.addSubview(collectionView)
+        self.view.addSubview(loadingIndicator)
     }
     
     private func setUpConstraints() {
@@ -66,6 +87,10 @@ final class MarvelHeroSearchViewController: UIViewController, View {
         collectionView.snp.makeConstraints { make in
             make.top.equalTo(searchBar.snp.bottom)
             make.leading.bottom.trailing.equalToSuperview()
+        }
+        
+        loadingIndicator.snp.makeConstraints { make in
+            make.center.equalToSuperview()
         }
     }
     
