@@ -107,5 +107,6 @@ final class MarvelHeroCell: UICollectionViewCell, View {
     
     override func prepareForReuse() {
         super.prepareForReuse()
+        heroImageView.cancelDownloadTask()
     }
 }
