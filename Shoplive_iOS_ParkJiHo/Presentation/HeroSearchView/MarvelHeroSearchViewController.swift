@@ -25,8 +25,6 @@ final class MarvelHeroSearchViewController: UIViewController, View {
         collectionView.keyboardDismissMode = .onDrag
         collectionView.register(MarvelHeroCell.self, forCellWithReuseIdentifier: MarvelHeroCell.identifier)
         collectionView.dataSource = self
-        addSubview()
-        setUpConstraints()
     }
     
     required init?(coder: NSCoder) {
@@ -35,43 +33,11 @@ final class MarvelHeroSearchViewController: UIViewController, View {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        addSubview()
+        setUpConstraints()
     }
-    
-    func bind(reactor: MarvelHeroSearchViewReactor) {
-        reactor.pulse(\.$heroCellReactors)
-            .asDriver(onErrorDriveWith: .empty())
-            .drive { [weak self] _ in
-                self?.collectionView.reloadData()
-            }
-            .disposed(by: self.disposeBag)
-            
-        searchBar.rx.value.changed
-            .compactMap { $0 }
-            .distinctUntilChanged()
-            .debounce(.milliseconds(300), scheduler: MainScheduler.instance)
-            .subscribe(onNext: { text in
-                reactor.action.onNext(.searchTermChanged(text))
-            })
-            .disposed(by: disposeBag)
-        
-        searchBar.rx.searchButtonClicked
-            .subscribe(onNext: { [weak self] in
-                self?.view.endEditing(true)
-            })
-            .disposed(by: disposeBag)
-        
-        collectionView.rx.scrolled(portion: 0.9)
-            .map { Reactor.Action.loadNextPage }
-            .bind(to: reactor.action)
-            .disposed(by: disposeBag)
-        
-        reactor.pulse(\.$isLoading)
-            .compactMap { $0 }
-            .asDriver(onErrorJustReturn: false)
-            .drive(loadingIndicator.rx.isAnimating)
-            .disposed(by: self.disposeBag)
-    }
-    
+
     private func addSubview() {
         self.view.addSubview(searchBar)
         self.view.addSubview(collectionView)
@@ -94,35 +60,95 @@ final class MarvelHeroSearchViewController: UIViewController, View {
         }
     }
     
+    func bind(reactor: MarvelHeroSearchViewReactor) {
+        //state
+        reactor.pulse(\.$heroCellReactors)
+            .asDriver(onErrorDriveWith: .empty())
+            .drive { [weak self] _ in
+                self?.collectionView.reloadData()
+            }
+            .disposed(by: disposeBag)
+            
+        reactor.pulse(\.$isLoading)
+            .compactMap { $0 }
+            .asDriver(onErrorJustReturn: false)
+            .drive(loadingIndicator.rx.isAnimating)
+            .disposed(by: disposeBag)
+        
+        reactor.pulse(\.$error)
+            .compactMap { $0 }
+            .asDriver(onErrorDriveWith: .empty())
+            .drive(self.rx.handleError)
+            .disposed(by: disposeBag)
+        
+        // searchBar
+        searchBar.rx.value.changed
+            .compactMap { $0 }
+            .distinctUntilChanged()
+            .debounce(.milliseconds(300), scheduler: MainScheduler.instance)
+            .subscribe(onNext: { text in
+                reactor.action.onNext(.searchTermChanged(text))
+            })
+            .disposed(by: disposeBag)
+        
+        searchBar.rx.searchButtonClicked
+            .subscribe(onNext: { [weak self] in
+                self?.view.endEditing(true)
+            })
+            .disposed(by: disposeBag)
+        
+        // collectionView
+        collectionView.rx.scrolled(portion: 0.9)
+            .map { Reactor.Action.loadNextPage }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        collectionView.rx.itemSelected
+            .asDriver()
+            .drive(onNext: { [weak self] indexPath in
+                guard let state = self?.reactor?.currentState.heroCellReactors?[indexPath.row].currentState else {
+                    return
+                }
+                if state.isFavorite {
+                    self?.reactor?.action.onNext(.cancelFavoriteHero(state.hero.id))
+                } else {
+                    self?.reactor?.action.onNext(.favoriteHero(state.hero))
+                }
+            })
+            .disposed(by: disposeBag)
+    }
+    
     private func createCollectionViewLayout() -> UICollectionViewFlowLayout {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
-        
         layout.minimumLineSpacing = 20
         layout.minimumInteritemSpacing = 20
         
         let itemWidth: CGFloat = MarvelHeroCell.imageSize.width
         layout.itemSize = CGSize(width: itemWidth, height: itemWidth * 1.6)
         layout.sectionInset = UIEdgeInsets(top: 20, left: 20, bottom: 0, right: 20)
-        
         return layout
     }
 }
 
+// MARK: - UICollectionViewDataSource
+
 extension MarvelHeroSearchViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        
         guard let reactors = self.reactor?.currentState.heroCellReactors else { return 0 }
-                
         return reactors.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MarvelHeroCell.identifier, for: indexPath) as?  MarvelHeroCell else { return UICollectionViewCell() }
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MarvelHeroCell.identifier,
+                                                            for: indexPath) as?  MarvelHeroCell else {
+            return UICollectionViewCell()
+        }
         
-        guard let reactor = self.reactor?.currentState.heroCellReactors?[safe: indexPath.row] else { return UICollectionViewCell() }
+        guard let reactor = self.reactor?.currentState.heroCellReactors?[safe: indexPath.row] else {
+            return UICollectionViewCell()
+        }
         cell.reactor = reactor
-        
         return cell
     }
 }

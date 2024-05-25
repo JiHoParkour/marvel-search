@@ -8,13 +8,16 @@
 import Foundation
 
 struct HeroViewModel {
+    let id: Int
     let name: String
     let description: String
     let thumbnailPath: String
+    let isFavorite: Bool = false
 }
 
 extension HeroViewModel {
     init(with hero: Hero) {
+        self.id = hero.id
         self.name = hero.name
         self.description = hero.description
         
