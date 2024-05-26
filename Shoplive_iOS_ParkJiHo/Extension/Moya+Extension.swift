@@ -11,9 +11,9 @@ import Moya
 import RxSwift
 
 extension MoyaProvider {
-    func request<T: Decodable>(_ target: Target, responseDataType: T.Type) -> Single<T> {
+    func request<T: Decodable>(_ target: Target, responseDataType: T.Type, completion: ((Cancellable) -> Void)? = nil) -> Single<T> {
         return Single.create { single in
-            self.request(target) { result in
+            let cancellable = self.request(target) { result in
                 do {
                     switch result {
                     case let .success(response):
@@ -36,6 +36,7 @@ extension MoyaProvider {
                     single(.failure(NetworkError.unknwon))
                 }
             }
+            completion?(cancellable)
             return Disposables.create()
         }
     }
