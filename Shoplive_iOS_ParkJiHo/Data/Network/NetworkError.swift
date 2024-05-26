@@ -18,11 +18,11 @@ enum NetworkError: Error {
     var localizedDescription: String {
         switch self {
         case .clientError:
-            NSLocalizedString("client error", comment: "")
+            NSLocalizedString("Client error occurred", comment: "")
         case .decodingError:
-            NSLocalizedString("decoding error", comment: "")
+            NSLocalizedString("Decoding error occurred", comment: "")
         case .unknwon:
-            NSLocalizedString("unknwon error", comment: "")
+            NSLocalizedString("Unknwon error occurred", comment: "")
         }
     }
 }

@@ -18,16 +18,27 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
     
     private func configureTabBar(with windowScene: UIWindowScene) {
-        let vc = MarvelHeroSearchViewController()
-        let reactor = MarvelHeroSearchViewReactor(useCase: MarvelHeroSearchUseCase(marvelHeroSearchRepository: MarvelHeroSearchRepository()))
-        vc.reactor = reactor
+        
+        let marvelHeroFavoriteUseCase = MarvelHeroFavoriteUseCase(marvelHeroFavoriteRepository: MarvelHeroFavoriteRepository())
+        let heroSearchViewController = MarvelHeroSearchViewController()
+        let heroSearchViewReactor = MarvelHeroSearchViewReactor(
+            marvelHeroSearchUseCase: MarvelHeroSearchUseCase(marvelHeroSearchRepository: MarvelHeroSearchRepository()),
+            marvelHeroFavoriteUseCase: marvelHeroFavoriteUseCase)
+        heroSearchViewController.reactor = heroSearchViewReactor
         let searchImage = UIImage(systemName: "magnifyingglass")
         let searchTabBarItem = UITabBarItem(title: "SEARCH", image: searchImage, selectedImage: nil)
-        vc.tabBarItem = searchTabBarItem
+        heroSearchViewController.tabBarItem = searchTabBarItem
+        
+        let favoriteHeroListViewController = FavoriteHeroListViewController()
+        let favoriteHeroListViewReactor = FavoriteHeroListViewReactor(marvelHeroFavoriteUseCase: marvelHeroFavoriteUseCase)
+        favoriteHeroListViewController.reactor = favoriteHeroListViewReactor
+        let favoriteImage = UIImage(systemName: "heart.fill")
+        let favoriteTabBarItem = UITabBarItem(title: "FAVORITE", image: favoriteImage, selectedImage: nil)
+        favoriteHeroListViewController.tabBarItem = favoriteTabBarItem
         
         let tabBarController = UITabBarController()
         tabBarController.tabBar.backgroundColor = .systemBackground
-        tabBarController.setViewControllers([vc], animated: false)
+        tabBarController.setViewControllers([heroSearchViewController, favoriteHeroListViewController], animated: false)
         
         let window = UIWindow(windowScene: windowScene)
         window.backgroundColor = .systemBackground

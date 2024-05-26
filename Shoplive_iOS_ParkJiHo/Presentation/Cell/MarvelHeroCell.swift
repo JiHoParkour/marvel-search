@@ -13,7 +13,7 @@ import SnapKit
 final class MarvelHeroCell: UICollectionViewCell, View {
     
     static let identifier = "MarvelHeroCell"
-
+    
     var disposeBag = DisposeBag()
     
     static var imageSize: CGSize {
@@ -58,7 +58,6 @@ final class MarvelHeroCell: UICollectionViewCell, View {
         self.contentView.addSubview(nameLabel)
         self.contentView.addSubview(heroImageView)
         self.contentView.addSubview(descriptionLabel)
-
     }
     
     private func setUpconstraints() {
@@ -80,6 +79,7 @@ final class MarvelHeroCell: UICollectionViewCell, View {
     }
     
     func bind(reactor: MarvelHeroCellReactor) {
+        //state
         reactor.state
             .map(\.hero.name)
             .distinctUntilChanged()
@@ -102,6 +102,15 @@ final class MarvelHeroCell: UICollectionViewCell, View {
             .distinctUntilChanged()
             .asDriver(onErrorDriveWith: .empty())
             .drive(descriptionLabel.rx.text)
+            .disposed(by: disposeBag)
+        
+        reactor.state
+            .map(\.isFavorite)
+            .distinctUntilChanged()
+            .asDriver(onErrorDriveWith: .empty())
+            .drive(onNext: { [weak self] isFavorite in
+                self?.contentView.backgroundColor = isFavorite ? .gray : .white
+            })
             .disposed(by: disposeBag)
     }
     

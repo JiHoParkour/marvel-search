@@ -8,7 +8,7 @@
 import RxSwift
 
 protocol MarvelHeroSearchUseCaseType {
-    func seaerch(name: String, offset: Int) -> Single<HeroSearch>
+    func search(name: String, offset: Int) -> Single<HeroSearch>
 }
 
 final class MarvelHeroSearchUseCase: MarvelHeroSearchUseCaseType {
@@ -19,7 +19,7 @@ final class MarvelHeroSearchUseCase: MarvelHeroSearchUseCaseType {
         self.marvelHeroSearchRepository = marvelHeroSearchRepository
     }
     
-    func seaerch(name: String, offset: Int) -> Single<HeroSearch> {
+    func search(name: String, offset: Int) -> Single<HeroSearch> {
         return marvelHeroSearchRepository.search(name: name, offset: offset)
     }
 }
