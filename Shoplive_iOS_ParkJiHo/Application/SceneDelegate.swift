@@ -20,10 +20,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     private func configureTabBar(with windowScene: UIWindowScene) {
         
         let marvelHeroFavoriteUseCase = MarvelHeroFavoriteUseCase(marvelHeroFavoriteRepository: MarvelHeroFavoriteRepository())
+        
         let heroSearchViewController = MarvelHeroSearchViewController()
+        let marvelHeroSearchUseCase = MarvelHeroSearchUseCase(marvelHeroSearchRepository: MarvelHeroSearchRepository())
         let heroSearchViewReactor = MarvelHeroSearchViewReactor(
-            marvelHeroSearchUseCase: MarvelHeroSearchUseCase(marvelHeroSearchRepository: MarvelHeroSearchRepository()),
-            marvelHeroFavoriteUseCase: marvelHeroFavoriteUseCase)
+            marvelHeroSearchUseCase: marvelHeroSearchUseCase,
+            marvelHeroFavoriteUseCase: marvelHeroFavoriteUseCase
+        )
         heroSearchViewController.reactor = heroSearchViewReactor
         let searchImage = UIImage(systemName: "magnifyingglass")
         let searchTabBarItem = UITabBarItem(title: "SEARCH", image: searchImage, selectedImage: nil)
