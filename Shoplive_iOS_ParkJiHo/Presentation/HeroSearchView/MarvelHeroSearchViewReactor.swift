@@ -159,7 +159,8 @@ final class MarvelHeroSearchViewReactor: Reactor {
 
 extension MarvelHeroSearchViewReactor {
     private func searchMarvelHero(name: String, offset: Int) -> Observable<Mutation> {
-        marvelHeroSearchUseCase.search(name: name, offset: offset)
+        marvelHeroSearchUseCase.cancellable?.cancel()
+        return marvelHeroSearchUseCase.search(name: name, offset: offset)
             .asObservable()
             .flatMap { response -> Observable<Mutation> in
                 let heroSearchViewModel = HeroSearchViewModel(with: response)

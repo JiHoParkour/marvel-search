@@ -9,8 +9,10 @@
 import Foundation
 
 import RxSwift
+import Moya
 
 final class MarvelHeroSearchRepositoryMock: MarvelHeroSearchRepositoryType {
+    var cancellable: Cancellable?
     var shouldSucceed: Bool = true
     func search(name: String, offset: Int) -> Single<HeroSearch> {
         return Single.create { [unowned self] single in

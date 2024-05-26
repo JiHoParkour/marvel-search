@@ -165,13 +165,15 @@ extension FavoriteHeroDatabaseManager {
                             name: String,
                             description: String,
                             thumbnailPath: String) throws -> FavoriteHero {
+        
+        var statement: OpaquePointer? = nil
         lock.lock()
         defer {
             lock.unlock()
+            sqlite3_finalize(statement)
         }
         
         let insertQuery = "INSERT INTO \(tableName) (id, hero_id, name, description, thumbnail_path) VALUES (?, ?, ?, ?, ?);"
-        var statement: OpaquePointer? = nil
         
         if sqlite3_prepare_v2(self.db, insertQuery, -1, &statement, nil) == SQLITE_OK {
             sqlite3_bind_int(statement, 2, Int32(heroID))

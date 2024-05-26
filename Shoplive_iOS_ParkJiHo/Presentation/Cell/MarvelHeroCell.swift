@@ -48,6 +48,7 @@ final class MarvelHeroCell: UICollectionViewCell, View {
         
         addSubview()
         setUpconstraints()
+        setUpView()
     }
     
     required init?(coder: NSCoder) {
@@ -76,6 +77,10 @@ final class MarvelHeroCell: UICollectionViewCell, View {
             make.top.equalTo(nameLabel.snp.bottom).offset(20)
             make.leading.bottom.trailing.equalToSuperview()
         }
+    }
+    
+    private func setUpView() {
+        self.contentView.backgroundColor = .systemBackground
     }
     
     func bind(reactor: MarvelHeroCellReactor) {
@@ -109,7 +114,7 @@ final class MarvelHeroCell: UICollectionViewCell, View {
             .distinctUntilChanged()
             .asDriver(onErrorDriveWith: .empty())
             .drive(onNext: { [weak self] isFavorite in
-                self?.contentView.backgroundColor = isFavorite ? .gray : .white
+                self?.contentView.backgroundColor = isFavorite ? .gray : .systemBackground
             })
             .disposed(by: disposeBag)
     }

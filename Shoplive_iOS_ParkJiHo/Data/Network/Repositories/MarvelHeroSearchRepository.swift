@@ -13,10 +13,13 @@ import RxSwift
 final class MarvelHeroSearchRepository: MarvelHeroSearchRepositoryType {
     
     let provider = MoyaProvider<MarvelHeroSearchAPI>()
-    
+    var cancellable: Cancellable?
+
     func search(name: String, offset: Int) -> Single<HeroSearch> {
         let request = HeroSearchRequestDTO(nameStartsWith: name, offset: offset)
-        return provider.request(.search(request), responseDataType: HeroSearchDTO.self)
-            .map { $0.toDomain() }
+        return provider.request(.search(request), responseDataType: HeroSearchDTO.self, completion: { [weak self] cancellable in
+            self?.cancellable = cancellable
+        })
+        .map { $0.toDomain() }
     }
 }
