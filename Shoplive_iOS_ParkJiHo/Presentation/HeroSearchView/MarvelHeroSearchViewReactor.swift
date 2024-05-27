@@ -78,10 +78,9 @@ final class MarvelHeroSearchViewReactor: Reactor {
         case .loadNextPage:
             guard currentState.hasNextPage,
                   currentState.isLoading == false,
-                  let searchTerm = currentState.searchTerm
-            else {
-                return .empty()
-            }
+                  let searchTerm = currentState.searchTerm,
+                  searchTerm.count >= 2 else { return .empty() }
+            
             return .concat(.just(.setLoading(true)),
                            searchMarvelHero(name: searchTerm, offset: currentState.currentHeroCount),
                            .just(.setLoading(false))
