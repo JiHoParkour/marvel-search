@@ -14,7 +14,7 @@
   
   각각 RxSwift의 debounce 오퍼레이터, Moya Cancellable의 cancel 메소드를 이용해 충족하였습니다.<br/>
 
-  아래 이미지는 Network Instruments를 통해 확인한 조건 충전 전후 API 요청입니다.<br/><br/>
+  아래 이미지는 Network Instruments를 통해 확인한 조건 충전 전후 API 요청입니다.<br/>
   
   호출 조건 충족 전
   <img width="1400" alt="notCancel" src="https://github.com/JiHoParkour/marvel-search/assets/102847545/86b09dcd-a3aa-4643-87c5-9d144974bc87">
