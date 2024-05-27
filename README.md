@@ -6,6 +6,7 @@
   그리고 각각은 비즈니스 로직을 구현하고 뷰의 상태를 관리하기 위한 Reactor를 바인딩합니다.
 
 
+
 - 마블 API를 사용했는가
   
   마블 영웅을 검색하기 위해 마블 API를 사용합니다.
@@ -13,11 +14,13 @@
   API 요청에 필요한 API key와 hash가 하드코딩되는 것을 막기 위해 빌드 세팅에 정의 후 info.plist 파일에서 참조하도록 하였습니다. 코드에서 키를 이용해 info.plist의 API key, hash에 접근합니다.
 
 
+
 - API 호출 조건을 충족했는가
   
   API 호출 조건은 다음 두 가지입니다.
   1. 검색어 입력 사이에 0.3초 딜레이
   2. API 호출 시 이전 호출은 cancel
+ 
   각각 RxSwift의 debounce 오퍼레이터, Moya Cancellable의 cancel 메소드를 이용해 충족하였습니다.
 
   아래 이미지는 Network Instruments를 통해 확인한 조건 충전 전후 API 요청입니다.
