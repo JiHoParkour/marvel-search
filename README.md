@@ -18,8 +18,9 @@
   <img width="1400" alt="notCancel" src="https://github.com/JiHoParkour/marvel-search/assets/102847545/86b09dcd-a3aa-4643-87c5-9d144974bc87">
 
   호출 조건 충족 후
-  <img width="1400" alt="cancel" src="https://github.com/JiHoParkour/marvel-search/assets/102847545/6a69f1ac-9f79-41ae-ab94-df80dfa909ac">
-    
-## 개발환경
+  <img width="1400" alt="cancel" src="https://github.com/JiHoParkour/marvel-search/assets/102847545/6a69f1ac-9f79-41ae-ab94-df80dfa909ac"><br/>
+
+  
+# 개발환경
 - Xcode 15.3
 - Deployment Target iOS 13.0
