@@ -4,10 +4,12 @@
   마블 영웅 검색 View Controller와 마블 영웅 좋아요 View Controller는 뷰 로직을 구현합니다.
   그리고 각각은 비즈니스 로직을 구현하고 뷰의 상태를 관리하기 위한 Reactor를 바인딩합니다.
 
+
 - 마블 API를 사용했는가
   
   마블 영웅을 검색하기 위해 마블 API를 사용합니다.
   API 요청에 필요한 API key와 hash가 하드코딩되는 것을 막기 위해 빌드 세팅에 정의 후 info.plist 파일에서 참조하도록 하였습니다. 코드에서 키를 이용해 info.plist의 API key, hash에 접근합니다.
+
 
 - API 호출 조건을 충족했는가
   
