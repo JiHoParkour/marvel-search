@@ -15,8 +15,7 @@ extension Reactive where Base: UIScrollView {
         let observable = contentOffset
             .filter { [weak base] contentOffset in
                 guard let scrollView = base,
-                      scrollView.contentOffset.y > 0
-                else { return false }
+                      scrollView.contentOffset.y > 0 else { return false }
                 
                 return contentOffset.y + scrollView.frame.height > scrollView.contentSize.height * portion
             }
